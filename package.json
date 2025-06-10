@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
-    "format": "npx prettier . --write"
+    "format": "npx prettier . --write",
+    "start": "node dist/src/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

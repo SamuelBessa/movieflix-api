@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
 
