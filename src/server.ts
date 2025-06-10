@@ -56,9 +56,7 @@ app.put('/movies/:id', async (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
   try {
-    const movie = await prisma.movie.findUnique({
-      where: { id },
-    });
+    const movie = await prisma.movie.findUnique({ where: { id } });
 
     if (!movie) {
       res.status(404).send({ message: 'Filme não encontrado' });
@@ -79,6 +77,26 @@ app.put('/movies/:id', async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: 'Falha ao atualizar o filme' });
+  }
+});
+
+app.delete('/movies/:id', async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  try {
+  const movie = await prisma.movie.findUnique({ where: { id} });
+
+  if (!movie){
+    res.status(404).send({ message: 'Filme não encontrado' });
+    return;
+  }
+
+  await prisma.movie.delete({ where: { id } });
+
+  res.status(200).send({ message: 'Filme excluído com sucesso' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Falha ao excluir o filme" });
   }
 });
 
