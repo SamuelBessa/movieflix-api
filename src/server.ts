@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { PrismaClient } from '../src/generated/prisma';
 
 const port = 3000;
@@ -20,20 +20,36 @@ app.get('/movies', async (_, res) => {
   res.json(movies);
 });
 
-app.post('/movies', async (req, res) => {
+app.post('/movies', async (req: Request, res: Response) => {
   const { title, genre_id, language_id, oscar_count, release_date } = req.body;
 
-  await prisma.movie.create({
-    data: {
-      title,
-      genre_id,
-      language_id,
-      oscar_count,
-      release_date: new Date(release_date),
-    },
-  });
+  try {
+    const movieWithSameTitle = await prisma.movie.findFirst({
+      where: {
+        title: { equals: title, mode: 'insensitive' },
+      },
+    });
 
-  res.status(201).send();
+    if (movieWithSameTitle) {
+      res.status(409).send({ message: 'Já existe um filme com esse título' });
+      return;
+    }
+
+    await prisma.movie.create({
+      data: {
+        title,
+        genre_id,
+        language_id,
+        oscar_count,
+        release_date: new Date(release_date),
+      },
+    });
+
+    res.status(201).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Falha ao cadastrar um filme' });
+  }
 });
 
 app.listen(port, () => {
